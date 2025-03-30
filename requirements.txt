@@ -1,7 +1,7 @@
 Django>=3.2,<4.0
 gunicorn>=20.1,<21.0
 psycopg2>=2.9,<3.0
-catboost==1.27
+catboost==1.2.7
 joblib==1.4.2
 djangorestframework>=3.12,<4.0
 pandas>=1.1.0
