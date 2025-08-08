@@ -18,4 +18,4 @@ def home(request):
     preds4 = cat_booster.predict([[34.29, 88.00, 3014.35, 386.86, 1, 0, 0, 0, 0]])
     # Print predictions and CatBoost version
     print(preds1,preds2,preds3,preds4)
-    return HttpResponse("Hello, world!", )
+    return HttpResponse("Hello, world!",preds1 )
