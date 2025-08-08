@@ -1,13 +1,14 @@
 from django.http import HttpResponse
 import pandas as pd
 import numpy as np
-import joblib
-import os
+from ..services.boot_model import get_model
+
 
 def home(request):
-    print(os.getcwd())
-    model_path_cat_booster = os.path.join(os.path.dirname(__file__), 'logistic_catboost_model_V4.pkl')
-    cat_booster = joblib.load(model_path_cat_booster)
+    """
+    Test route AI
+    """
+    cat_booster =get_model()
     print(cat_booster)
     predictions = cat_booster.predict([[34.29, 88.00, 3014.35, 386.86, 1, 0, 0, 0, 0]])
     print("np",np.__version__,"pd",pd.__version__,"pred",predictions)
@@ -17,5 +18,5 @@ def home(request):
     preds3 = cat_booster.predict([[32.29, 88.00, 3014.35, 386.86, 1, 0, 0, 0, 0]])
     preds4 = cat_booster.predict([[34.29, 88.00, 3014.35, 386.86, 1, 0, 0, 0, 0]])
     # Print predictions and CatBoost version
-    print(preds1,preds2,preds3,preds4)
-    return HttpResponse("Hello, world!",preds1 )
+    
+    return HttpResponse(f"TEST samples {preds1} {preds2} {preds3} {preds4}" )
