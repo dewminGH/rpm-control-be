@@ -6,3 +6,5 @@ joblib==1.4.2
 djangorestframework>=3.12,<4.0
 pandas>=1.1.0
 numpy>=1.19.0
+psycopg2>=2.9.10
+dotenv>=0.9.9
