@@ -9,6 +9,7 @@ class CatPredsSerializer(serializers.Serializer):
     humidity=serializers.FloatField(required=True)
     light=serializers.FloatField(required=True)
     cos_2=serializers.FloatField(required=True)
+    device_secret=serializers.CharField(required=True, max_length=255)
 
     def create(self, validated_data: dict) -> dict:
         return validated_data
