@@ -35,9 +35,8 @@ def cat_preds_fbv(request):
 
             # predict output
             fan_rpm = cat_booster.predict([features])
-            
             # table rpm table
-            insert_row_rpm_table=FanRpm( 
+            insert_row_rpm_table=FanRpm(
                 device_secret=device_secret,
                 fan_speed=fan_rpm,
                 temperature=temperature,
@@ -45,7 +44,6 @@ def cat_preds_fbv(request):
                 light=light,
                 co2=cos_2,
                 container_type=item_type,)
-            
             insert_row_rpm_table.save()
 
             return Response({'message': f'fan rpm {fan_rpm}'}, status=status.HTTP_200_OK)
