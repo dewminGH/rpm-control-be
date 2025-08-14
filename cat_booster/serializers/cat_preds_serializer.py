@@ -18,3 +18,17 @@ class CatPredsSerializer(serializers.Serializer):
         for k, v in validated_data.items():
             setattr(instance, k, v)
         return instance
+    
+class GetDeviceCatPredsSerializer(serializers.Serializer):
+    """
+    validate params for devices rpms
+    """
+    device_secret = serializers.CharField(required=True)
+
+    def create(self, validated_data: dict) -> dict:
+        return validated_data
+
+    def update(self, instance, validated_data: dict):
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+        return instance

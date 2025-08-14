@@ -2,13 +2,14 @@ from rest_framework.decorators import  api_view
 from rest_framework.response import Response
 from rest_framework import status
 from utils import helpers
-from ..serializers.cat_preds_serializer import CatPredsSerializer
+from ..serializers.cat_preds_serializer import CatPredsSerializer, GetDeviceCatPredsSerializer
 from ..services import boot_model
 from ..models.fan_rpm_model import FanRpm
+from ..filters.rpm_filter import filter_rpm_by_device
 
 
 
-@api_view(["POST"])
+@api_view(["POST","GET"])
 def cat_preds_fbv(request):
     """
     AI Predictions handler
@@ -48,7 +49,20 @@ def cat_preds_fbv(request):
             
             insert_row_rpm_table.save()
 
-            return Response({'message': f'fan rpm {fan_rpm}'}, status=status.HTTP_200_OK)
+            return Response({'data': f'fan rpm {fan_rpm}'}, status=status.HTTP_200_OK)
         else:
             return helpers.validate_exception_response_400()
+        
+    if request.method == "GET":
+       validator = GetDeviceCatPredsSerializer(data=request.query_params)
+       is_valid = validator.is_valid()
+       device_secret=request.query_params.values()
+       print(is_valid)
+       if(is_valid):
+           rpm_data =filter_rpm_by_device(device_secret)
+           return Response({'data':f'rpms {rpm_data}',},status=status.HTTP_200_OK)
+       else:
+           return helpers.validate_exception_response_400()
+       
+
     return helpers.validate_exception_response_404()
