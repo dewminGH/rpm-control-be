@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-@*vn$tg0mj0%n5dgmhu^fjx(_s#=vvubgcx-gca8bvyhycb8d$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['cat-booster-x.onrender.com', 'yourdomain.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -53,8 +53,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'cat_booster.middleware.access_middleware.AccessMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'python_fn.urls'

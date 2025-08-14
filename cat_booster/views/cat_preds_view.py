@@ -19,7 +19,13 @@ def cat_preds_fbv(request):
         is_valid = validator.is_valid()
         if is_valid:
             categories = ["apple", "banana", "mango", "papaya", "watermelon"]
-            item_type,temperature,humidity,light,cos_2,device_secret=request.data.values()
+            # item_type,temperature,humidity,light,cos_2,device_secret,=request.data.values()
+            item_type      = request.data.get("item_type")
+            temperature    = request.data.get("temperature")
+            humidity       = request.data.get("humidity")
+            light          = request.data.get("light")
+            cos_2          = request.data.get("cos_2")
+            device_secret  = request.data.get("device_secret")
             cat_booster=boot_model.get_model()
             print(temperature)
             features = [
@@ -31,8 +37,10 @@ def cat_preds_fbv(request):
             
 
             # logs
-            print(temperature)
+            print(item_type,temperature,humidity,light,cos_2,device_secret,)
+            print('feat')
             print(features)
+            print('feated')
 
             # predict output
             fan_rpm = cat_booster.predict([features])
@@ -45,22 +53,20 @@ def cat_preds_fbv(request):
                 light=light,
                 co2=cos_2,
                 container_type=item_type,)
-            insert_row_rpm_table.save()
+            insert_row_rpm_table.save(force_insert=True)
 
             return Response({'data': f'fan rpm {fan_rpm}'}, status=status.HTTP_200_OK)
         else:
             return helpers.validate_exception_response_400()
-        
     if request.method == "GET":
        validator = GetDeviceCatPredsSerializer(data=request.query_params)
        is_valid = validator.is_valid()
-       device_secret=request.query_params.values()
+       device_secret, = request.query_params.values()
        print(is_valid)
        if(is_valid):
-           rpm_data =filter_rpm_by_device(device_secret)
-           return Response({'data':f'rpms {rpm_data}',},status=status.HTTP_200_OK)
+           rpms = filter_rpm_by_device(device_secret)
+           rpm_data = list(rpms.values())
+           return Response({'data': {'rpm_data':rpm_data}},status=status.HTTP_200_OK)
        else:
            return helpers.validate_exception_response_400()
-       
-
     return helpers.validate_exception_response_404()
