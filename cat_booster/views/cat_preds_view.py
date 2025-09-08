@@ -57,6 +57,7 @@ def cat_preds_fbv(request):
 
             return Response({'data': f'fan rpm {fan_rpm}'}, status=status.HTTP_200_OK)
         else:
+            print('data invalid',request.data)
             return helpers.validate_exception_response_400()
     if request.method == "GET":
        validator = GetDeviceCatPredsSerializer(data=request.query_params)

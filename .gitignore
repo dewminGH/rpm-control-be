@@ -18,6 +18,7 @@ venv/
 env/
 .venv/
 *.env/
+node_modules
 
 # IDE-specific files
 .idea/
