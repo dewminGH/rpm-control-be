@@ -14,6 +14,9 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 from urllib.parse import urlparse, parse_qsl
+from datetime import timedelta
+from corsheaders.defaults import default_headers
+
 
 load_dotenv()
 
@@ -31,7 +34,20 @@ SECRET_KEY = 'django-insecure-@*vn$tg0mj0%n5dgmhu^fjx(_s#=vvubgcx-gca8bvyhycb8d$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*','http://localhost:5173']
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),  
+    "USER_ID_FIELD": "user_id", 
+    "USER_ID_CLAIM": "user_id", 
+}
+
 
 
 # Application definition
@@ -43,7 +59,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cat_booster'
+    'cat_booster',
+    'users',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -53,10 +71,16 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'python_fn.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
 
 TEMPLATES = [
     {
@@ -98,6 +122,9 @@ DATABASES = {
     }
 }
 
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "x-api-key",
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

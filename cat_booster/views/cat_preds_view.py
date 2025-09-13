@@ -5,7 +5,7 @@ from utils import helpers
 from ..serializers.cat_preds_serializer import CatPredsSerializer, GetDeviceCatPredsSerializer
 from ..services import boot_model
 from ..models.fan_rpm_model import FanRpm
-from ..filters.rpm_filter import filter_rpm_by_device
+from ..filters.rpm_filter import filter_rpm_by_device,filter_container_type
 
 
 
@@ -18,14 +18,16 @@ def cat_preds_fbv(request):
         validator=CatPredsSerializer(data=request.data)
         is_valid = validator.is_valid()
         if is_valid:
+            device_secret  = request.data.get("device_secret")
+            cn_type = filter_container_type(device_secret).values_list("container_type", flat=True).first()
             categories = ["apple", "banana", "mango", "papaya", "watermelon"]
             # item_type,temperature,humidity,light,cos_2,device_secret,=request.data.values()
-            item_type      = request.data.get("item_type")
+            item_type      = cn_type or request.data.get("item_type")
             temperature    = request.data.get("temperature")
             humidity       = request.data.get("humidity")
             light          = request.data.get("light")
             cos_2          = request.data.get("cos_2")
-            device_secret  = request.data.get("device_secret")
+           
             cat_booster=boot_model.get_model()
             print(temperature)
             features = [

@@ -1,6 +1,8 @@
 CREATE TABLE Users (
     user_id serial PRIMARY KEY,
     user_name VARCHAR(255),
+    password VARCHAR(50),
+    container_type VARCHAR(50),
     rpm_id int,
     constraint c1 foreign key (rpm_id)
 references fan_rpms(id)
