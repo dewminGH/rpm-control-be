@@ -14,7 +14,6 @@ class UserSerializer(serializers.Serializer):
         for k, v in validated_data.items():
             setattr(instance, k, v)
         return instance
-    
 
 class UpdateContainerTypeSerializer(serializers.Serializer):
     """user container type serializer"""

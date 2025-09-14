@@ -3,13 +3,25 @@ import ws from "ws";
 import type { Server } from "socket.io";
 import { DBConnection } from "./db";
 
-// Enable WebSocket transport for Node (must be set before creating Client)
 neonConfig.webSocketConstructor = ws;
 
 export function startFanRpmListener(io: Server) {
   let stopped = false;
   let client: Client | null = null;
   let keepAlive: NodeJS.Timeout | null = null;
+
+  io.on("connection", (socket) => {
+    const deviceSecret =
+      socket.handshake.auth.device_secret ||
+      socket.handshake.query.device_secret;
+
+    if (deviceSecret) {
+      socket.join(`device:${deviceSecret}`);
+      console.log(`Client joined room device:${deviceSecret}`);
+    } else {
+      console.warn("Client connected without device_secret");
+    }
+  });
 
   (async function loop() {
     while (!stopped) {
@@ -26,21 +38,39 @@ export function startFanRpmListener(io: Server) {
 
         client.on("notification", async (msg: any) => {
           if (msg.channel !== "fan_rpm_channel") return;
+
           let latest: any = null;
           try {
             latest = JSON.parse(msg.payload ?? "{}");
-          } catch {}
+          } catch (err) {
+            console.error("Failed to parse payload:", err);
+            return;
+          }
+
+          if (!latest?.device_secret) {
+            console.warn("Notification missing device_secret:", latest);
+            return;
+          }
+
           let lastTenRecords: any[] = [];
           try {
             lastTenRecords = await DBConnection`
               SELECT *
               FROM fan_rpms
+              WHERE device_secret = ${latest.device_secret}
               ORDER BY id DESC
               LIMIT 20
             `;
-          } catch {}
+          } catch (_) {
+            console.log(_);
+          }
+
           console.log({ latest });
-          io.emit("rpm-sync", { latest, lastTenRecords });
+
+          io.to(`device:${latest.device_secret}`).emit("rpm-sync", {
+            latest,
+            lastTenRecords,
+          });
         });
 
         await new Promise<void>((resolve) => {

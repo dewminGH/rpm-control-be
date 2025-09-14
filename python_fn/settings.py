@@ -42,6 +42,9 @@ REST_FRAMEWORK = {
     )
 }
 
+# AUTH_USER_MODEL = "users.User"
+
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=30),  
     "USER_ID_FIELD": "user_id", 
@@ -63,6 +66,7 @@ INSTALLED_APPS = [
     'users',
     'corsheaders',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

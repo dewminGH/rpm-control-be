@@ -21,6 +21,7 @@ def login(request):
 
     res = filter_user_for_login(user_name, password, device_sc)
     user = res.first()
+    print(user.user_id)
     if not user:
          return Response(
             {"message": "Username password incorrect", "data": None,},
@@ -33,7 +34,7 @@ def login(request):
     if res.exists():
         user_data = UserSerializer(res.first()).data
         return Response(
-            {"message": "Login successful", "data": user_data,"access_token": str(access_token),},
+            {"message": "Login successful", "data": user_data,"access_token": str(access_token),'user_id':user.user_id},
             status=status.HTTP_200_OK
         )
     else:
