@@ -27,7 +27,6 @@ def cat_preds_fbv(request):
             humidity       = request.data.get("humidity")
             light          = request.data.get("light")
             cos_2          = request.data.get("cos_2")
-           
             cat_booster=boot_model.get_model()
             print(temperature)
             features = [
@@ -45,7 +44,18 @@ def cat_preds_fbv(request):
             print('feated')
 
             # predict output
-            fan_rpm = cat_booster.predict([features])
+            fan_rpm= 0
+            if (item_type in ['apple', 'banana']) and (temperature < 26.5):
+                fan_rpm= 0
+            else :
+                if (item_type in ['watermelon', 'papaya']) and temperature < 25.5:
+                    fan_rpm = 0
+                else:
+                    if item_type == 'mango' and temperature < 28:
+                        fan_rpm = 0
+                    else:
+                        fan_rpm = cat_booster.predict([features])
+
             # table rpm table
             insert_row_rpm_table=FanRpm(
                 device_secret=device_secret,
