@@ -15,8 +15,10 @@ def cat_preds_fbv(request):
     AI Predictions handler
     """
     if request.method == "POST":
+        print('body log', request.data)
         validator=CatPredsSerializer(data=request.data)
         is_valid = validator.is_valid()
+        print(is_valid,'validate payload done ....')
         if is_valid:
             device_secret  = request.data.get("device_secret")
             cn_type = filter_container_type(device_secret).values_list("container_type", flat=True).first()
@@ -45,13 +47,13 @@ def cat_preds_fbv(request):
 
             # predict output
             fan_rpm= 0
-            if (item_type in ['apple', 'banana']) and (temperature < 26.5):
+            if (item_type in ['apple', 'banana']) and (temperature < 28.5):
                 fan_rpm= 0
             else :
-                if (item_type in ['watermelon', 'papaya']) and temperature < 25.5:
+                if (item_type in ['watermelon', 'papaya']) and temperature < 28.7:
                     fan_rpm = 0
                 else:
-                    if item_type == 'mango' and temperature < 28:
+                    if item_type == 'mango' and temperature < 29:
                         fan_rpm = 0
                     else:
                         fan_rpm = cat_booster.predict([features])
@@ -67,7 +69,7 @@ def cat_preds_fbv(request):
                 container_type=item_type,)
             insert_row_rpm_table.save(force_insert=True)
 
-            return Response({'data': f'fan rpm {fan_rpm}'}, status=status.HTTP_200_OK)
+            return Response({'data': fan_rpm}, status=status.HTTP_200_OK)
         else:
             print('data invalid',request.data)
             return helpers.validate_exception_response_400()
